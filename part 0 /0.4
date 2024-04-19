@@ -1,0 +1,38 @@
+#Create a similar diagram depicting the situation where the user creates a new note on the page https://studies.cs.helsinki.fi/exampleapp/notes by writing something into the text field and clicking the Save button.
+
+#If necessary, show operations on the browser or on the server as comments on the diagram.
+
+#The diagram does not have to be a sequence diagram. Any sensible way of presenting the events is fine.
+
+#All necessary information for doing this, and the next two exercises, can be found in the text of this part. The idea of these exercises is to read the text once more and to think through what is going on there. Reading the application code is not necessary, but it is of course possible.
+
+#You can do the diagrams with any program, but perhaps the easiest and the best way to do diagrams is the Mermaid syntax that is now implemented in GitHub Markdown pages!
+
+
+step1: From the https://studies.cs.helsinki.ft/exampleapp/notes after submitting a comment by pressing the save button 
+a post request to the url: https://studies.cs.helsinki.fi/exampleapp/new_note is made. Based on observation the new_note request the request Method: POST
+Status code: 302 Found Remote Address: 128.214.137.97:443 Failed to load response data: No content available because this request was redirected!
+Response Headers: Content length: 78
+Content Type: test/html;charset=utf-8
+location: /exampleapp/notes
+server: ngins/1.20.1
+X-Powered-By: Express
+Host: studies.cs.helsinki.ft
+Orgin: https://studies.cs.helsinki.fi
+#Then we are reddirected to the URL: https://studies.cs.helsinki.fi/exampleapp/notes 
+#Which fetched the /notes directory in the server 
+#content-length: 439, Content-Type: Text/html: charset=utf-8
+#Server: nginx/1.20.1
+#X Powered By: Express
+#https://studies.cs/helsinki.fi/exampleapp/main.css
+#Request Method: GET
+Status Code 200ok Remote Address: 128.214.137.97:443
+#text/css is the content type
+#Request URL:
+https://studies.cs.helsinki.fi/exampleapp/main.js, next
+the Request Method: GET
+Content-Type: application/javascript; charset=UTF-8
+Then the json data is fetched you get the fst fam!
+
+
+
