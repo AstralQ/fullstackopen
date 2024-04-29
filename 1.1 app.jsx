@@ -7,13 +7,14 @@ const Header = ({ course }) => {
 const Content = ({ parts }) => {
   return (
     <div>
-      {
-        parts.map(function(part) {
-          <p key = {part.name}>
+      {parts.map(function(part) {
+        
+        return (
+          <p key={part.name}>
             {part.name} {part.exercises}
           </p>
-        })
-      }
+        );
+      })}
     </div>
   );
 }
