@@ -1,0 +1,86 @@
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+
+// http://localhost:3001/phonebook
+const App = () => {
+  const [contacts, setContacts] = useState([]);
+  const [name, setName] = useState('');
+  const [number, setNumber] = useState('');
+  const [search, setSearch] = useState('');
+
+  useEffect(() => {
+    axios.get('http://localhost:3001/phonebook')
+      .then(response => {
+        setContacts(response.data);
+      });
+  }, []);
+
+  const nameOnChange = (event) => {
+    setName(event.target.value);
+  };
+
+  const numberOnChange = (event) => {
+    setNumber(event.target.value);
+  };
+
+  const searchOnChange = (event) => {
+    setSearch(event.target.value);
+  };
+
+  const deleteContact = (id) => {
+    axios.delete(`http://localhost:3001/phonebook/${id}`)
+      .then(() => {
+        setContacts(contacts.filter(contact => contact.id !== id));
+      });
+  };
+
+  const onSubmit = (event) => {
+    event.preventDefault();
+    const newContact = {
+      name: name,
+      number: number,
+    };
+    axios.post('http://localhost:3001/phonebook', newContact)
+      .then(response => {
+        setContacts(prevContacts => [...prevContacts, response.data]);
+        setName('');
+        setNumber('');
+      });
+  };
+
+  const filteredContacts = contacts.filter(contact => 
+    contact.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  return (
+    <div>
+      <h1>Phonebook</h1>
+      <div>
+        <h2>Add a new</h2>
+        <form onSubmit={onSubmit}>
+          <div>
+            <p>Name: <input value={name} onChange={nameOnChange} /></p>
+            <p>Number: <input value={number} onChange={numberOnChange} /></p>
+            <button type="submit">Add</button>
+          </div>
+        </form>
+        <div>
+          <h3>Search Contact</h3>
+          <p>Search Name: <input value={search} onChange={searchOnChange} /></p>
+        </div>
+        <div>
+          <ul>
+            {filteredContacts.map(contact => (
+              <li key={contact.id}>
+                {contact.name} : {contact.number}
+                <button onClick={() => deleteContact(contact.id)}>Delete</button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default App;
