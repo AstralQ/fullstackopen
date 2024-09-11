@@ -1,0 +1,122 @@
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+
+// Define the Notification component separately
+const Notification = ({ message }) => {
+  if (!message) return null;
+  return <div>{message}</div>;
+};
+
+// Main App component
+const App = () => {
+  const [contacts, setContacts] = useState([]);
+  const [name, setName] = useState('');
+  const [number, setNumber] = useState('');
+  const [search, setSearch] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+
+  useEffect(() => {
+    axios.get('http://localhost:3001/phonebook')
+      .then(response => {
+        setContacts(response.data);
+      })
+      .catch(error => {
+        console.error('Failed to fetch contacts', error);
+      });
+  }, []);
+
+  const nameOnChange = (event) => {
+    setName(event.target.value);
+  };
+
+  const numberOnChange = (event) => {
+    setNumber(event.target.value);
+  };
+
+  const searchOnChange = (event) => {
+    setSearch(event.target.value);
+  };
+
+  const deleteContact = (id) => {
+    axios.delete(`http://localhost:3001/phonebook/${id}`)
+      .then(() => {
+        setContacts(contacts.filter(contact => contact.id !== id));
+      })
+      .catch(error => {
+        console.error('Failed to delete contact', error);
+      });
+  };
+
+  const onSubmit = (event) => {
+    event.preventDefault();
+    if (!name || !number) {
+      setSuccessMessage('Both name and number are required');
+      setTimeout(() => setSuccessMessage(''), 5000);
+      return;
+    }
+
+    // Check if contact with the same name already exists
+    const existingContact = contacts.find(contact => contact.name === name);
+    if (existingContact) {
+      setSuccessMessage(`${name} is already in the phonebook`);
+      setTimeout(() => setSuccessMessage(''), 5000);
+      return;
+    }
+
+    const newContact = {
+      name: name,
+      number: number,
+    };
+
+    axios.post('http://localhost:3001/phonebook', newContact)
+      .then(response => {
+        setContacts(prevContacts => [...prevContacts, response.data]);
+        setName('');
+        setNumber('');
+        setSuccessMessage(`Added ${name}`);
+        setTimeout(() => setSuccessMessage(''), 5000);
+      })
+      .catch(error => {
+        console.error('Failed to add contact', error);
+        setSuccessMessage('Failed to add contact');
+        setTimeout(() => setSuccessMessage(''), 5000);
+      });
+  };
+
+  const filteredContacts = contacts.filter(contact => 
+    contact.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  return (
+    <div>
+      <Notification message={successMessage} />
+      <h1>Phonebook</h1>
+      <div>
+        <h2>Add a new</h2>
+        <form onSubmit={onSubmit}>
+          <div>
+            <p>Name: <input value={name} onChange={nameOnChange} /></p>
+            <p>Number: <input value={number} onChange={numberOnChange} /></p>
+            <button type="submit">Add</button>
+          </div>
+        </form>
+        <div>
+          <h3>Search Contact</h3>
+          <p>Search Name: <input value={search} onChange={searchOnChange} /></p>
+        </div>
+        <div>
+          <ul>
+            {filteredContacts.map(contact => (
+              <li key={contact.id}>
+                {contact.name} : {contact.number}
+                <button onClick={() => deleteContact(contact.id)}>Delete</button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default App;
